@@ -18,17 +18,17 @@
   * @brief  The application entry point.
   * @retval int
   */
+
+int i =1;
 int main(void)
 {
 
   Init_HW();
   Init_MicroSD();
 
-  //Test_1();
+  //Crea_Archivo("AMUNT.TXT");
+  Escribe_Archivo("AMUNT.TXT");
 
-  Crea_Carpeta ("/TEST");
-  Crea_Carpeta ("/AMUNT");
-  Crea_Carpeta ("/VALENCIA");
 
   while (1)
   {
