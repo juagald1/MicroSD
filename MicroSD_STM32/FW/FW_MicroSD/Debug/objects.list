@@ -1,3 +1,5 @@
+"./Core/Src/Init_HW.o"
+"./Core/Src/Init_MicroSD.o"
 "./Core/Src/main.o"
 "./Core/Src/stm32f4xx_hal_msp.o"
 "./Core/Src/stm32f4xx_it.o"
