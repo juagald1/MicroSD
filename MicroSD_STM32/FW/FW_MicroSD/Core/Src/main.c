@@ -19,16 +19,18 @@
   * @retval int
   */
 
-int i =1;
+float var1 = 5.26;
+float var2 = 7.69;
+
 int main(void)
 {
 
   Init_HW();
   Init_MicroSD();
 
-  //Crea_Archivo("AMUNT.TXT");
-  Escribe_Archivo("AMUNT.TXT");
-
+  Crea_Archivo	  ("PROBA.CSV\0");
+  Escribe_Archivo ("PROBA.CSV\0", &var1);
+  Escribe_Archivo ("PROBA.CSV\0", &var2);
 
   while (1)
   {

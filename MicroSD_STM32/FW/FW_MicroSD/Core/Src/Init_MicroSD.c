@@ -27,6 +27,11 @@ FATFS
 
 #include "Init_MicroSD.h"
 #include "fatfs.h"
+#include "stdio.h"
+#include "string.h"
+
+#define   LONGIUD_MAX_DATO 20
+#define	  MAX_DECIMALES	   1000 			/*!< 1000 = 3 DECIMALES, 100 = 2 DECIMALES ...*/
 
 SD_HandleTypeDef hsd;
 FATFS 	 		 FAT_FS;
@@ -35,6 +40,11 @@ UINT  			 testByte;
 sMicroSD		 MicroSD;
 
 char RAIZ_SD [3] = "0:";
+char datos_array[LONGIUD_MAX_DATO] = {' '} ;
+
+int  n_bytes;
+int  suma;
+
 
 /**
   * @brief SDIO Initialization Function
@@ -58,6 +68,48 @@ void Init_MicroSD (void)
 {
 	  SDIO_SD_Init();
 	  FATFS_Init();
+}
+
+void Datos_Char (void *datos)
+{
+	float parte_decimal;
+	int parte_entera;
+	int parte_decimal_entera;
+
+	float dato = *(float *) datos;			/*!< Se pasa el numero recibido a decimal       */
+	parte_entera = dato;					/*!< Obtiene parte entera del numero recibido   */
+	parte_decimal = (dato-parte_entera);	/*!< Obtiene parte decimal del numero recibido  */
+
+	/** NUMERO ENTERO */
+	if(dato-parte_entera == 0)
+	{
+		sprintf (datos_array, "%d", parte_entera);
+	}
+
+	/** NUMERO DECIMAL */
+	else{
+
+		/*!< Si el dato es negativo, cambia a positiva la parte decimal  */
+		if (dato < 0)
+		{
+			parte_decimal = (parte_decimal*(-1));
+		}
+
+		parte_decimal = (parte_decimal*MAX_DECIMALES);					    /*!< Tres decimales de precisión ajustar con DEFINE  */
+		parte_decimal_entera = parte_decimal;								/*!< Pasa a entera la parte decimal  				 */
+		sprintf (datos_array, "%d.%d", parte_entera, parte_decimal_entera);	/*!< Genera un string con la parte entera y decimal  */
+	}
+}
+
+int Recorre_Array (void){
+
+	for (int i= 0; i<=LONGIUD_MAX_DATO;i++){
+
+		if(datos_array[i] == 0){
+			suma++;
+		}
+	}
+	return suma++;
 }
 
 /**
@@ -111,9 +163,6 @@ void Crea_Archivo (const TCHAR* nombre_archivo_crear)
 	}
 }
 
-
-
-
 /**
   * @brief  Función que permite borrar un archivo de la raiz de la tarjeta Micro SD.
   * 		Imporante! Añadir al final del nombre del archivo su formato.
@@ -138,23 +187,28 @@ void Borra_Archivo (const TCHAR* nombre_archivo_borrar)
   * @param  void*:  Datos a escribir en archivo
   * @retval None
   */
-void Escribe_Archivo (const TCHAR* nombre_archivo)
+void Escribe_Archivo (const TCHAR* nombre_archivo, void *datos)
 {
 	if(f_mount(&FAT_FS, RAIZ_SD, 1) == FR_OK)
 	{
+
 	  /**  MEJORAS
 		*  Se debe permitir la entrada de datos como argumento en la función
 	    *  Los datos deben entrar por un *void y transformarse a char
-		*/
+        **/
 
-		char myData[] = "Hello World\0";											//JGD MEJORAR FUNCION
+		Datos_Char(datos);
 
-		if(f_open(&Archivo, nombre_archivo, FA_WRITE | FA_READ) != FR_OK)
+		n_bytes = ((sizeof (datos_array))- Recorre_Array());
+		datos_array[n_bytes] = 0x3B;							// 0x3B -> ';' ASCII
+		n_bytes = n_bytes+1;									//
+
+		if(f_open(&Archivo, nombre_archivo, FA_OPEN_APPEND | FA_WRITE | FA_READ) != FR_OK)
 		{
 			MicroSD.Flags.Error.Apertura_Archivo = 1;
 		}
 
-		if (f_write(&Archivo, myData, sizeof(myData), &testByte) != FR_OK)
+		if (f_write(&Archivo, &datos_array, n_bytes, &testByte) != FR_OK)
 		{
 			MicroSD.Flags.Error.Escritura_Archivo = 1;
 		}
@@ -163,5 +217,6 @@ void Escribe_Archivo (const TCHAR* nombre_archivo)
 		{
 			MicroSD.Flags.Error.Cierre_Archivo = 1;
 		}
+			n_bytes=suma=0;		//JGD METER EN ESTRUCTURA DE DATOS
 	}
 }

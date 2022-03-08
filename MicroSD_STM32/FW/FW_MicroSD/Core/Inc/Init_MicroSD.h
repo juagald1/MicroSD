@@ -17,6 +17,7 @@ typedef struct sMicroSD{
         uint8_t All;
         struct
         {
+        	uint8_t  Monta_Memoria:1;
         	uint8_t  Crea_Carpeta:1;
         	uint8_t  Crea_Archivo:1;
         	uint8_t  Borra_Carpeta:1;
@@ -32,14 +33,13 @@ typedef struct sMicroSD{
 void SDIO_SD_Init 	 (void);
 void Init_MicroSD 	 (void);
 
+void Datos_Char 	 (void *datos);
+
 void Crea_Carpeta 	 (const TCHAR* nombre_carpeta_crear);				//OK
 void Borra_Carpeta	 (const TCHAR* nombre_carpeta_borrar);				//OK
 void Crea_Archivo 	 (const TCHAR* nombre_archivo_crear);				//OK
 void Borra_Archivo	 (const TCHAR* nombre_archivo_borrar);				//OK
-void Escribe_Archivo (const TCHAR* nombre_archivo_crear);
-
-
-
+void Escribe_Archivo (const TCHAR* nombre_archivo, void *datos);
 
 
 
