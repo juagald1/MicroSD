@@ -26,13 +26,13 @@ FATFS
 
 FORMATO UTF8!!!!
 
-
 */
 
 #include "Init_MicroSD.h"
 #include "fatfs.h"
 #include "stdio.h"
 #include "string.h"
+#include <stdlib.h>
 
 #define   LONGIUD_MAX_DATO 20
 #define	  MAX_DECIMALES	   1000 			/*!< 1000 = 3 DECIMALES, 100 = 2 DECIMALES ...*/
@@ -41,21 +41,25 @@ SD_HandleTypeDef hsd;
 FATFS 	 		 FAT_FS;
 FIL   			 Archivo;
 UINT  			 testByte;
-tFlagsMicroSD	 Error;
+
+tMicroSD		MicroSD;
+
 
 char RAIZ_SD [3] = "0:";
 char datos_array[LONGIUD_MAX_DATO] = {' '} ;
 
+
+
 ///////////////////////////
-int  	suma;
+//int  	suma;
 ///////////////////////////
-int  	n_bytes;
-uint8_t add_separador;
+//int  	n_bytes;
+//uint8_t add_separador;
 ///////////////////////////
-float   parte_decimal;
-int 	parte_entera;
-float 	dato_dec;
-int 	parte_decimal_entera;
+//float   parte_decimal;
+//int 	parte_entera;
+//float 	dato_dec;
+//int 	parte_decimal_entera;
 ///////////////////////////
 int  	dato_ent;
 ///////////////////////////
@@ -90,47 +94,48 @@ int Recorre_Array (void){
 	for (int i= 0; i<=LONGIUD_MAX_DATO;i++){
 
 		if(datos_array[i] == 0){
-			suma++;
+			MicroSD.CS.suma++;
 		}
 	}
-	return suma++;
+	return MicroSD.CS.suma++;
 }
-
-
 
 
 uint8_t Datos_String 	 (void *datos, tTipoDatos Tipo_Dato)
 {
-	/*!< Filtro para comprobra si el tipo de dato introducido es admisible			 			*/
-
+	/*!< Filtro para comprobra si el tipo de dato introducido es admisible					*/
+	if((Tipo_Dato != Entero) && (Tipo_Dato != Decimal) && (Tipo_Dato != Cadena_Caracteres))
+	{
+		Tipo_Dato = Desconocido;
+	}
 		switch (Tipo_Dato)
 		{
 
 		case Entero:
 			dato_ent 	  = *(int *) datos;											/*!< Se pasa el numero recibido a decimal      				    */
 			sprintf (datos_array, "%d", dato_ent);									/*!< Genera un string con la parte entera			 			*/
-			add_separador = 1;
+			MicroSD.CS.add_separador = 1;
 			break;
 
 		case Decimal:
-			dato_dec      = *(float *) datos;										/*!< Se pasa el numero recibido a decimal      				    */
-			parte_entera  = dato_dec;												/*!< Obtiene parte entera del numero recibido       			*/
-			parte_decimal = (dato_dec-parte_entera);								/*!< Obtiene parte decimal del numero recibido  				*/
+			MicroSD.CS.dato_dec      = *(float *) datos;										/*!< Se pasa el numero recibido a decimal      				    */
+			MicroSD.CS.parte_entera  = MicroSD.CS.dato_dec;												/*!< Obtiene parte entera del numero recibido       			*/
+			MicroSD.CS.parte_decimal = (MicroSD.CS.dato_dec -MicroSD.CS.parte_entera);								/*!< Obtiene parte decimal del numero recibido  				*/
 
-			if (dato_dec < 0)														/*!< Si el dato es negativo, cambia a positiva la parte decimal */
+			if (MicroSD.CS.dato_dec  < 0)														/*!< Si el dato es negativo, cambia a positiva la parte decimal */
 			{
-				parte_decimal = (parte_decimal*(-1));
+				MicroSD.CS.parte_decimal = (MicroSD.CS.parte_decimal*(-1));
 			}
 
-			parte_decimal 		 = (parte_decimal*MAX_DECIMALES);					/*!< Tres decimales de precisión ajustar con DEFINE  			 */
-			parte_decimal_entera = parte_decimal;									/*!< Pasa a entera la parte decimal  							 */
-			sprintf (datos_array, "%d.%d", parte_entera, parte_decimal_entera);		/*!< Genera un string con la parte entera y decimal 			 */
-			add_separador 		 = 1;
+			MicroSD.CS.parte_decimal 		 = (MicroSD.CS.parte_decimal*MAX_DECIMALES);					/*!< Tres decimales de precisión ajustar con DEFINE  			 */
+			MicroSD.CS.parte_decimal_entera  = 			MicroSD.CS.parte_decimal;									/*!< Pasa a entera la parte decimal  							 */
+			sprintf (datos_array, "%d.%d", MicroSD.CS.parte_entera, MicroSD.CS.parte_decimal_entera);		/*!< Genera un string con la parte entera y decimal 			 */
+			MicroSD.CS.add_separador 		 = 1;
 			break;
 
 		case Cadena_Caracteres:
 			strcpy(datos_array, datos);
-			add_separador = 1;
+			MicroSD.CS.add_separador = 1;
 			break;
 
 		case Desconocido:
@@ -139,11 +144,11 @@ uint8_t Datos_String 	 (void *datos, tTipoDatos Tipo_Dato)
 		}
 
 		/*!< Añade ; para separar datos en archivo ,CSV  */
-		if(add_separador == 1)
+		if(MicroSD.CS.add_separador == 1)
 		{
-			n_bytes = ((sizeof (datos_array))- Recorre_Array());
-			datos_array[n_bytes] = 0x3B;											/*!< 0x3B -> ';' ASCII  		 								 */
-			n_bytes = n_bytes+1;
+			MicroSD.CS.n_bytes = ((sizeof (datos_array))- Recorre_Array());
+			datos_array[MicroSD.CS.n_bytes] = 0x3B;											/*!< 0x3B -> ';' ASCII  		 								 */
+			MicroSD.CS.n_bytes = MicroSD.CS.n_bytes+1;
 			Estado  = 1;
 		}
 
@@ -162,10 +167,11 @@ void Crea_Carpeta (const TCHAR* nombre_carpeta_crear)
 	{
 		if(f_mkdir(nombre_carpeta_crear) != FR_OK)
 		{
-			Error.Flags.Bit.Crea_Carpeta = 1;
+			MicroSD.ErrorFlags.Bit.Crea_Carpeta = 1;
+			MicroSD.ErrorFlags.Bit.Crea_Carpeta = 1;
 		}
 	}else{
-			Error.Flags.Bit.Monta_Memoria = 1;
+			MicroSD.ErrorFlags.Bit.Monta_Memoria = 1;
 	}
 }
 
@@ -180,10 +186,10 @@ void Borra_Carpeta (const TCHAR* nombre_carpeta_borrar)
 	{
 		if(f_unlink(nombre_carpeta_borrar) != FR_OK)
 		{
-			Error.Flags.Bit.Borra_Carpeta = 1;
+			MicroSD.ErrorFlags.Bit.Borra_Carpeta = 1;
 		}
 	}else{
-		Error.Flags.Bit.Monta_Memoria = 1;
+			MicroSD.ErrorFlags.Bit.Monta_Memoria = 1;
 	}
 }
 
@@ -200,11 +206,11 @@ void Crea_Archivo (const TCHAR* nombre_archivo_crear)
 	{
 		if(f_open(&Archivo, nombre_archivo_crear, FA_CREATE_NEW | FA_WRITE | FA_READ) != FR_OK)
 		{
-			Error.Flags.Bit.Crea_Archivo = 1;
+			MicroSD.ErrorFlags.Bit.Crea_Archivo = 1;
 		}
 			f_close(&Archivo);
 	}else{
-			Error.Flags.Bit.Monta_Memoria = 1;
+			MicroSD.ErrorFlags.Bit.Monta_Memoria = 1;
 	}
 }
 
@@ -220,10 +226,10 @@ void Borra_Archivo (const TCHAR* nombre_archivo_borrar)
 	{
 		if(f_unlink(nombre_archivo_borrar) != FR_OK)
 		{
-			Error.Flags.Bit.Borra_Carpeta = 1;
+			MicroSD.ErrorFlags.Bit.Borra_Carpeta = 1;
 		}
 	}else{
-			Error.Flags.Bit.Monta_Memoria = 1;
+			MicroSD.ErrorFlags.Bit.Monta_Memoria = 1;
 	}
 }
 
@@ -231,7 +237,7 @@ void Borra_Archivo (const TCHAR* nombre_archivo_borrar)
   * @brief  Función que permite escribir datos en un archivo de la raiz de la tarjeta Micro SD ya existente.
   * 		Imporante! Añadir al final del nombre del archivo su formato.
   * @param  TCHAR*: "Nombre del Archivo a Escribir".
-  * @param  void*:  Datos a escribir en archivo
+  * @param  void*:  Datos a escribir en archivo (admite enteros, decimales y cadenas de caraceteres)
   * @retval None
   */
 void Escribe_Archivo (const TCHAR* nombre_archivo, void *Datos, tTipoDatos Tipo_Dato)
@@ -240,35 +246,35 @@ void Escribe_Archivo (const TCHAR* nombre_archivo, void *Datos, tTipoDatos Tipo_
 	{
 		if( Datos_String(Datos, Tipo_Dato) == 1)
 		{
-
 			if(f_open(&Archivo, nombre_archivo, FA_OPEN_APPEND | FA_WRITE | FA_READ) != FR_OK)
 			{
-				Error.Flags.Bit.Apertura_Archivo = 1;
+				MicroSD.ErrorFlags.Bit.Apertura_Archivo = 1;
 			}
 
-			if (f_write(&Archivo, &datos_array, n_bytes, &testByte) != FR_OK)
+			if (f_write(&Archivo, &datos_array, MicroSD.CS.n_bytes, &testByte) != FR_OK)
 			{
-				Error.Flags.Bit.Escritura_Archivo = 1;
+				MicroSD.ErrorFlags.Bit.Escritura_Archivo = 1;
 			}
 
 			if (f_close(&Archivo) != FR_OK)
 			{
-				Error.Flags.Bit.Cierre_Archivo = 1;
+				MicroSD.ErrorFlags.Bit.Cierre_Archivo = 1;
 			}
-				n_bytes=suma=0;		//JGD METER EN ESTRUCTURA DE DATOS y dato_ent poner a 0, datos array reiniciar
-				add_separador = 0;
-				dato_dec =0;
+				//n_bytes=0;
+				//suma=0;		//JGD METER EN ESTRUCTURA DE DATOS y dato_ent poner a 0, datos array reiniciar
+				//add_separador = 0;
+				//dato_dec =0;
 				dato_ent=0;
-				parte_decimal=0;
-				parte_decimal_entera=0;
+				//parte_decimal=0;
+				//parte_decimal_entera=0;
 				Estado=0;
 
 				memset(datos_array, '\0', sizeof(datos_array));	//JGD Reset Array
 		}else{
-				Error.Flags.Bit.Tipo_de_Dato_Desconocido = 1;
+				MicroSD.ErrorFlags.Bit.Tipo_de_Dato_Desconocido = 1;
 		}
 
 	}else{
-				Error.Flags.Bit.Monta_Memoria = 1;
+				MicroSD.ErrorFlags.Bit.Monta_Memoria = 1;
 	}
 }

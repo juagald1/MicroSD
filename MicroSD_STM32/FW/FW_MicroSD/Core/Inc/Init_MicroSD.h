@@ -21,24 +21,35 @@
 **********************************************************************************/
 typedef struct sFlagsMicroSD{
 
-    union
-        {
-        uint8_t All;
-        struct
-        {
-        	uint8_t  Monta_Memoria:1;
-        	uint8_t  Crea_Carpeta:1;
-        	uint8_t  Crea_Archivo:1;
-        	uint8_t  Borra_Carpeta:1;
-        	uint8_t  Borra_Archivo:1;
-        	uint8_t  Escritura_Archivo:1;
-        	uint8_t  Apertura_Archivo:1;
-        	uint8_t	 Cierre_Archivo:1;
-        	uint8_t  Tipo_de_Dato_Desconocido:1;
-        } Bit;
-    }Flags;
+	struct
+	{
+		uint8_t  Monta_Memoria:1;
+		uint8_t  Crea_Carpeta:1;
+		uint8_t  Crea_Archivo:1;
+		uint8_t  Borra_Carpeta:1;
+		uint8_t  Borra_Archivo:1;
+		uint8_t  Escritura_Archivo:1;
+		uint8_t  Apertura_Archivo:1;
+		uint8_t	 Cierre_Archivo:1;
+		uint8_t  Tipo_de_Dato_Desconocido:1;
+	} Bit;
 
 }tFlagsMicroSD;
+
+typedef struct sConvString{
+
+	int  	suma;
+	int  	n_bytes;
+	uint8_t add_separador;
+	float   parte_decimal;
+	int 	parte_entera;
+	float 	dato_dec;
+	int 	parte_decimal_entera;
+	int  	dato_ent;
+	uint8_t Estado;
+
+}tConvString;
+
 
 /**
 *******************************************************************************
@@ -57,6 +68,14 @@ typedef enum eTipoDatos{
 	Desconocido		  = 3
 
 }tTipoDatos;
+
+typedef struct sMicroSD{
+
+	tConvString	  CS;
+	tFlagsMicroSD ErrorFlags;
+
+
+}tMicroSD;
 
 
 void 	SDIO_SD_Init 	 (void);
