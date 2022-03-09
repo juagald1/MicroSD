@@ -19,8 +19,9 @@
   * @retval int
   */
 
-float var1 = 5.26;
-float var2 = 7.69;
+int 	var1 = 90;
+float 	var2 = 619.619;
+char 	myData[] = {"AMUNT\0"};
 
 int main(void)
 {
@@ -28,9 +29,11 @@ int main(void)
   Init_HW();
   Init_MicroSD();
 
-  Crea_Archivo	  ("PROBA.CSV\0");
-  Escribe_Archivo ("PROBA.CSV\0", &var1);
-  Escribe_Archivo ("PROBA.CSV\0", &var2);
+  Crea_Archivo	  ("AMUNT.CSV\0");
+  Escribe_Archivo ("AMUNT.CSV\0", &var1, 			5);
+  Escribe_Archivo ("AMUNT.CSV\0", &var2, 			Decimal);
+  Escribe_Archivo ("AMUNT.CSV\0", &myData, 			Cadena_Caracteres);
+  Escribe_Archivo ("AMUNT.CSV\0", "VALENCIA\0", 	Cadena_Caracteres);
 
   while (1)
   {

@@ -10,7 +10,16 @@
 
 #include "ff.h"
 
-typedef struct sMicroSD{
+/**
+************************************************************************************
+\typedef        tFlagsMicroSD
+\brief          Tipo definido para guardado de los flags de error generados durante
+				la gestión de la tarjeta micro SD
+\struct         tFlagsMicroSD
+\brief          Estructura para guardado de los flags de error generados durante
+				la gestión de la tarjeta micro SD
+**********************************************************************************/
+typedef struct sFlagsMicroSD{
 
     union
         {
@@ -25,24 +34,39 @@ typedef struct sMicroSD{
         	uint8_t  Escritura_Archivo:1;
         	uint8_t  Apertura_Archivo:1;
         	uint8_t	 Cierre_Archivo:1;
-        } Error;
+        	uint8_t  Tipo_de_Dato_Desconocido:1;
+        } Bit;
     }Flags;
 
-}sMicroSD;
+}tFlagsMicroSD;
 
-void SDIO_SD_Init 	 (void);
-void Init_MicroSD 	 (void);
+/**
+*******************************************************************************
+\typedef        tTipoDatos
+\brief          Tipo definido para la identificación de los distintos tipos de
+				dato admisibles en la función Escribe_Archivo
+\enum           tTipoDatos
+\brief          Enumerado definido para la identificación de los distintos
+				tipos de dato admisibles en la función Escribe_Archivo
+******************************************************************************/
+typedef enum eTipoDatos{
 
-void Datos_Char 	 (void *datos);
+	Entero  		  = 0,
+	Decimal 		  = 1,
+	Cadena_Caracteres = 2,
+	Desconocido		  = 3
 
-void Crea_Carpeta 	 (const TCHAR* nombre_carpeta_crear);				//OK
-void Borra_Carpeta	 (const TCHAR* nombre_carpeta_borrar);				//OK
-void Crea_Archivo 	 (const TCHAR* nombre_archivo_crear);				//OK
-void Borra_Archivo	 (const TCHAR* nombre_archivo_borrar);				//OK
-void Escribe_Archivo (const TCHAR* nombre_archivo, void *datos);
-
+}tTipoDatos;
 
 
+void 	SDIO_SD_Init 	 (void);
+void 	Init_MicroSD 	 (void);
 
+void 	Crea_Carpeta 	 (const TCHAR* nombre_carpeta_crear);									//OK
+void 	Borra_Carpeta	 (const TCHAR* nombre_carpeta_borrar);									//OK
+void 	Crea_Archivo 	 (const TCHAR* nombre_archivo_crear);									//OK
+void 	Borra_Archivo	 (const TCHAR* nombre_archivo_borrar);									//OK
+uint8_t Datos_String 	 (void *datos, tTipoDatos Tipo_Dato);
+void	Escribe_Archivo  (const TCHAR* nombre_archivo, void *Datos, tTipoDatos Tipo_Dato);
 
 #endif /* INC_INIT_MICROSD_H_ */
