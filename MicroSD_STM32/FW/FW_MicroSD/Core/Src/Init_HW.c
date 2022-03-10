@@ -2,7 +2,7 @@
  * Init_HW.c
  *
  *  Created on: 3 mar. 2022
- *      Author: jugaldo
+ *      Author: Juan Galbis Domènech
  */
 
 #include "stm32f4xx_hal.h"

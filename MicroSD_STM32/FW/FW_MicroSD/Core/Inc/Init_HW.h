@@ -2,7 +2,7 @@
  * Init_HW.h
  *
  *  Created on: 3 mar. 2022
- *      Author: jugaldo
+ *      Author: Juan Galbis Domènech
  */
 
 #ifndef INC_INIT_HW_H_

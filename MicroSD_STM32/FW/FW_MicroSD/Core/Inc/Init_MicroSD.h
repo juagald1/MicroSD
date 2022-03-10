@@ -2,13 +2,18 @@
  * Init_MicroSD.h
  *
  *  Created on: 3 mar. 2022
- *      Author: jugaldo
+ *      Author: Juan Galbis Domènech
  */
 
 #ifndef INC_INIT_MICROSD_H_
 #define INC_INIT_MICROSD_H_
 
 #include "ff.h"
+
+#define   LONGIUD_MAX_STRING 	20
+#define	  MAX_DECIMALES	     	1000 			/*!< 1000 = 3 DECIMALES, 100 = 2 DECIMALES ...*/
+
+
 
 /**
 ************************************************************************************
@@ -25,28 +30,25 @@ typedef struct sFlagsMicroSD{
 	{
 		uint8_t  Monta_Memoria:1;
 		uint8_t  Crea_Carpeta:1;
-		uint8_t  Crea_Archivo:1;
+		uint8_t  Archivo_Existente:1;
 		uint8_t  Borra_Carpeta:1;
 		uint8_t  Borra_Archivo:1;
 		uint8_t  Escritura_Archivo:1;
 		uint8_t  Apertura_Archivo:1;
 		uint8_t	 Cierre_Archivo:1;
 		uint8_t  Tipo_de_Dato_Desconocido:1;
-	} Bit;
+	} Error;
 
 }tFlagsMicroSD;
 
 typedef struct sConvString{
 
-	int  	suma;
-	int  	n_bytes;
-	uint8_t add_separador;
-	float   parte_decimal;
-	int 	parte_entera;
-	float 	dato_dec;
-	int 	parte_decimal_entera;
-	int  	dato_ent;
-	uint8_t Estado;
+	float   Parte_Decimal;
+	int 	Parte_Entera;
+	float 	Dato_Decimal;
+	int 	Parte_Decimal_Entera;
+	int  	Dato_Entero;
+	uint8_t estado;
 
 }tConvString;
 
@@ -71,9 +73,10 @@ typedef enum eTipoDatos{
 
 typedef struct sMicroSD{
 
+	char Raiz_SD [2];
+	char Datos_String [LONGIUD_MAX_STRING];
+	tFlagsMicroSD Flags;
 	tConvString	  CS;
-	tFlagsMicroSD ErrorFlags;
-
 
 }tMicroSD;
 

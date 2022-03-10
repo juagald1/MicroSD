@@ -19,7 +19,7 @@
   * @retval int
   */
 
-int 	var1 = 90;
+int 	var1 = 512;
 float 	var2 = 619.619;
 char 	myData[] = {"HOLA_MUNDO\0"};
 
