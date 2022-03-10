@@ -43,9 +43,9 @@ typedef struct sFlagsMicroSD{
 
 typedef struct sConvString{
 
+	float 	Dato_Decimal;
 	float   Parte_Decimal;
 	int 	Parte_Entera;
-	float 	Dato_Decimal;
 	int 	Parte_Decimal_Entera;
 	int  	Dato_Entero;
 	uint8_t estado;

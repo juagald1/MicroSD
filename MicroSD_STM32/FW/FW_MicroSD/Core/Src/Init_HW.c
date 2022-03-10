@@ -1,9 +1,13 @@
-/*
- * Init_HW.c
- *
- *  Created on: 3 mar. 2022
- *      Author: Juan Galbis Domènech
- */
+/**
+**************************************************************************************
+\file          Init_HW.c
+\brief         Módulo que continen las funciones para inicializado de los GPIOs y
+ 	 	 	   relojes del microcontrolador.
+\details
+\author        Juan Galbis Domènech
+\version       1.0
+\date          03/03/2022
+**************************************************************************************/
 
 #include "stm32f4xx_hal.h"
 
