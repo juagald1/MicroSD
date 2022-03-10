@@ -97,12 +97,21 @@ void HAL_SD_MspInit(SD_HandleTypeDef* hsd)
 
     __HAL_RCC_GPIOC_CLK_ENABLE();
     __HAL_RCC_GPIOD_CLK_ENABLE();
-    /**SDIO GPIO Configuration
+
+    /**SDIO GPIO Configuration 1bit
     PC8     ------> SDIO_D0
     PC12     ------> SDIO_CK
     PD2     ------> SDIO_CMD
     */
-    GPIO_InitStruct.Pin = GPIO_PIN_8|GPIO_PIN_12;
+    /**SDIO GPIO Configuration 4bit
+    PC8     ------> SDIO_D0
+    PC9     ------> SDIO_D1
+    PC10     ------> SDIO_D2
+    PC11     ------> SDIO_D3
+    PC12     ------> SDIO_CK
+    PD2     ------> SDIO_CMD
+    */
+    GPIO_InitStruct.Pin = GPIO_PIN_8|GPIO_PIN_9|GPIO_PIN_10|GPIO_PIN_11|GPIO_PIN_12;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
@@ -139,12 +148,22 @@ void HAL_SD_MspDeInit(SD_HandleTypeDef* hsd)
     /* Peripheral clock disable */
     __HAL_RCC_SDIO_CLK_DISABLE();
 
-    /**SDIO GPIO Configuration
+    /**SDIO GPIO Configuration 1 bit
     PC8     ------> SDIO_D0
     PC12     ------> SDIO_CK
     PD2     ------> SDIO_CMD
     */
-    HAL_GPIO_DeInit(GPIOC, GPIO_PIN_8|GPIO_PIN_12);
+
+    /**SDIO GPIO Configuration 4 bit
+    PC8     ------> SDIO_D0
+    PC9     ------> SDIO_D1
+    PC10     ------> SDIO_D2
+    PC11     ------> SDIO_D3
+    PC12     ------> SDIO_CK
+    PD2     ------> SDIO_CMD
+    */
+    HAL_GPIO_DeInit(GPIOC, GPIO_PIN_8|GPIO_PIN_9|GPIO_PIN_10|GPIO_PIN_11
+                          |GPIO_PIN_12);
 
     HAL_GPIO_DeInit(GPIOD, GPIO_PIN_2);
 
