@@ -1,8 +1,11 @@
 /**
 **************************************************************************************
 \file          main.c
-\brief         Archivo principal del Firmware para gestión de tarjeta Micro SD modo
- 	 	 	   1 bit.
+\brief         Archivo principal del firmware para gestión de tarjeta Micro SD en
+ 	 	 	   modo 1 bit o 4 bits. La gestión de la tarjeta Micro SD se puede seguir
+ 	 	 	   al completo desde la estructura tMicroSD.
+
+ 	 	 	   Es posible modificar la configuración inicial desde Init_MicroSD.h
 \details
 \author        Juan Galbis Domènech
 \version       1.0
@@ -19,20 +22,24 @@
   * @retval int
   */
 
-int 	var1 = 555;
-float 	var2 = 798.12;
-char 	myData[] = {"HOLA\0"};
-
 int main(void)
 {
 
   Init_HW();
   Init_MicroSD();
 
+  /** Solo para este ejemplo, borrar para otras aplicaciones */
+
+  int 	var1 	 = 1993;
+  float var2 	 = 01.09;
+  char 	myData[] = {"Hola Mundo"};
+
   Crea_Archivo	  ("TEST.CSV\0");
-  Escribe_Archivo ("TEST.CSV\0", &var1, 	 Entero);
-  Escribe_Archivo ("TEST.CSV\0", &var2, 	 Decimal);
+  Escribe_Archivo ("TEST.CSV\0", &var1,   Entero);
+  Escribe_Archivo ("TEST.CSV\0", &var2,   Decimal);
   Escribe_Archivo ("TEST.CSV\0", &myData, Cadena_Caracteres);
+
+  /** 														 */
 
   while (1)
   {

@@ -21,7 +21,8 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 /* USER CODE BEGIN Includes */
-
+#include "Init_MicroSD.h"
+extern uint8_t Intefaz;
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -41,7 +42,6 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -89,47 +89,62 @@ void HAL_SD_MspInit(SD_HandleTypeDef* hsd)
   GPIO_InitTypeDef GPIO_InitStruct = {0};
   if(hsd->Instance==SDIO)
   {
-  /* USER CODE BEGIN SDIO_MspInit 0 */
 
-  /* USER CODE END SDIO_MspInit 0 */
+  /* USER CODE BEGIN SDIO_MspInit 0 */
+#if INTERFAZ_SD == 1
+
+    /**SDIO GPIO Configuration 1bit
+    PC8     ------> SDIO_D0
+    PC12    ------> SDIO_CK
+    PD2     ------> SDIO_CMD
+    */
+	GPIO_InitStruct.Pin = GPIO_PIN_8|GPIO_PIN_12;
+	GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+	GPIO_InitStruct.Pull = GPIO_NOPULL;
+	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+	GPIO_InitStruct.Alternate = GPIO_AF12_SDIO;
+	HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+#endif
+
+#if INTERFAZ_SD == 4
+
+    /**SDIO GPIO Configuration 4bit
+    PC8     ------> SDIO_D0
+    PC9     ------> SDIO_D1
+    PC10    ------> SDIO_D2
+    PC11    ------> SDIO_D3
+    PC12    ------> SDIO_CK
+    PD2     ------> SDIO_CMD
+    */
+    GPIO_InitStruct.Pin		  = GPIO_PIN_8|GPIO_PIN_9|GPIO_PIN_10|GPIO_PIN_11|GPIO_PIN_12;
+    GPIO_InitStruct.Mode	  = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull 	  = GPIO_NOPULL;
+    GPIO_InitStruct.Speed 	  = GPIO_SPEED_FREQ_VERY_HIGH;
+    GPIO_InitStruct.Alternate = GPIO_AF12_SDIO;
+
+    HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+#endif
+
+    GPIO_InitStruct.Pin 	  = GPIO_PIN_2;
+    GPIO_InitStruct.Mode 	  = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull 	  = GPIO_NOPULL;
+    GPIO_InitStruct.Speed     = GPIO_SPEED_FREQ_VERY_HIGH;
+    GPIO_InitStruct.Alternate = GPIO_AF12_SDIO;
+
+    HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+
+    /* USER CODE END SDIO_MspInit 0 */
     /* Peripheral clock enable */
     __HAL_RCC_SDIO_CLK_ENABLE();
 
     __HAL_RCC_GPIOC_CLK_ENABLE();
     __HAL_RCC_GPIOD_CLK_ENABLE();
 
-    /**SDIO GPIO Configuration 1bit
-    PC8     ------> SDIO_D0
-    PC12     ------> SDIO_CK
-    PD2     ------> SDIO_CMD
-    */
-    /**SDIO GPIO Configuration 4bit
-    PC8     ------> SDIO_D0
-    PC9     ------> SDIO_D1
-    PC10     ------> SDIO_D2
-    PC11     ------> SDIO_D3
-    PC12     ------> SDIO_CK
-    PD2     ------> SDIO_CMD
-    */
-    GPIO_InitStruct.Pin = GPIO_PIN_8|GPIO_PIN_9|GPIO_PIN_10|GPIO_PIN_11|GPIO_PIN_12;
-    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-    GPIO_InitStruct.Alternate = GPIO_AF12_SDIO;
-    HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
-
-    GPIO_InitStruct.Pin = GPIO_PIN_2;
-    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-    GPIO_InitStruct.Alternate = GPIO_AF12_SDIO;
-    HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
-
   /* USER CODE BEGIN SDIO_MspInit 1 */
 
   /* USER CODE END SDIO_MspInit 1 */
   }
-
 }
 
 /**

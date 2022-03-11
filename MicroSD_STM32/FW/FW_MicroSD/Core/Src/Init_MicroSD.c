@@ -2,8 +2,8 @@
 **************************************************************************************
 \file          Init_MicroSD.c
 \brief         Módulo que contiene las funciones desarrolladas para gestionar una
-			   tarjeta micro SD (Fomrato Codificacion UTF8)
-\details
+			   tarjeta micro SD
+\details	   Codificacion ASCII UTF8
 \author        Juan Galbis Domènech
 \version       1.0
 \date          03/03/2022
@@ -13,7 +13,7 @@
 #include "fatfs.h"
 #include "stdio.h"
 #include "string.h"
-#include <stdlib.h>
+#include "stdlib.h"
 
 //* FATFS						*/
 SD_HandleTypeDef hsd;
@@ -23,6 +23,7 @@ UINT  			 testByte;
 
 //* GESTION MICRO SD			*/
 tMicroSD		 MicroSD;
+
 
 /**
   * @brief Función que permite inicializar el modulo SDIO
@@ -42,11 +43,11 @@ void SDIO_SD_Init(void)
 
   if (HAL_SD_Init(&hsd) != HAL_OK)
   {
-    //Error_Handler();
+	 MicroSD.Flags.Error.SD_Init = 1;
   }
   if (HAL_SD_ConfigWideBusOperation(&hsd, SDIO_BUS_WIDE_4B) != HAL_OK)
   {
-    //Error_Handler();
+	 MicroSD.Flags.Error.Config_Bus_Wide = 1;
   }
 
 }
@@ -119,7 +120,6 @@ uint8_t Datos_String 	 (void *datos, tTipoDatos Tipo_Dato)
 	return MicroSD.CS.estado;
 }
 
-
 /**
   * @brief  Función que permite crear una carpeta en la raiz de la tarjeta Micro SD.
   * @param  TCHAR*: "Nombre de la Carpeta a Crear".
@@ -169,7 +169,7 @@ void Crea_Archivo (const TCHAR* nombre_archivo_crear)
 	{
 		if(f_open(&Archivo, nombre_archivo_crear, FA_CREATE_NEW | FA_WRITE | FA_READ) != FR_OK)
 		{
-			MicroSD.Flags.Error.Archivo_Existente = 1;
+			MicroSD.Flags.Archivo_Existente = 1;
 		}
 			f_close(&Archivo);
 	}else{
