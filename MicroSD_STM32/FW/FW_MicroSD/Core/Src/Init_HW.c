@@ -1,7 +1,7 @@
 /**
 **************************************************************************************
 \file          Init_HW.c
-\brief         Módulo que continen las funciones para inicializado de los GPIOs y
+\brief         Módulo que contine las funciones para inicializado de los GPIOs y
  	 	 	   relojes del microcontrolador.
 \details
 \author        Juan Galbis Domènech

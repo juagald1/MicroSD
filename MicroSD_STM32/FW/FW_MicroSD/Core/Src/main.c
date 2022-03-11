@@ -32,12 +32,13 @@ int main(void)
 
   int 	var1 	 = 1993;
   float var2 	 = 01.09;
-  char 	myData[] = {"Hola Mundo"};
+  char 	myData[] = {"Hola Mundo\0"};
 
   Crea_Archivo	  ("TEST.CSV\0");
   Escribe_Archivo ("TEST.CSV\0", &var1,   Entero);
-  Escribe_Archivo ("TEST.CSV\0", &var2,   Decimal);
   Escribe_Archivo ("TEST.CSV\0", &myData, Cadena_Caracteres);
+  Escribe_Archivo ("TEST.CSV\0", &var2,   Decimal);
+
 
   /** 														 */
 

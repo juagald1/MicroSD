@@ -24,6 +24,8 @@ UINT  			 testByte;
 //* GESTION MICRO SD			*/
 tMicroSD		 MicroSD;
 
+int x;
+
 
 /**
   * @brief Función que permite inicializar el modulo SDIO
@@ -116,6 +118,19 @@ uint8_t Datos_String 	 (void *datos, tTipoDatos Tipo_Dato)
 			MicroSD.CS.estado = 0;
 			break;
 		}
+
+	if(MicroSD.CS.estado == 1)
+	{
+		for(x=0; x<=sizeof(MicroSD.Datos_String); x++)
+		{
+			if(MicroSD.Datos_String[x] != ';')
+			{
+				MicroSD.CS.n++;
+			}else{
+				MicroSD.CS.n_bytes = MicroSD.CS.n;
+			}
+		}
+	}
 
 	return MicroSD.CS.estado;
 }
@@ -213,7 +228,7 @@ void Escribe_Archivo (const TCHAR* nombre_archivo, void *Datos, tTipoDatos Tipo_
 			{
 				MicroSD.Flags.Error.Apertura_Archivo = 1;
 			}
-			if (f_write(&Archivo, &MicroSD.Datos_String, sizeof(MicroSD.Datos_String), &testByte) != FR_OK)
+			if (f_write(&Archivo, &MicroSD.Datos_String, MicroSD.CS.n_bytes, &testByte) != FR_OK)
 			{
 				MicroSD.Flags.Error.Escritura_Archivo = 1;
 			}

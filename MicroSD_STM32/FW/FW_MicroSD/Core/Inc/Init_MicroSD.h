@@ -63,6 +63,8 @@ typedef struct sConvString{
 	int 	Parte_Decimal_Entera;
 	int  	Dato_Entero;
 	uint8_t estado;
+	uint8_t n;
+	uint8_t n_bytes;
 
 }tConvString;
 
