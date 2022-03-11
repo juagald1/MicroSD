@@ -39,7 +39,6 @@ int main(void)
   Escribe_Archivo ("TEST.CSV\0", &myData, Cadena_Caracteres);
   Escribe_Archivo ("TEST.CSV\0", &var2,   Decimal);
 
-
   /** 														 */
 
   while (1)

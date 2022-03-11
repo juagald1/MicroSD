@@ -13,6 +13,8 @@
 #define	 MAX_DECIMALES	     	1000 			/*!< 1000 = 3 DECIMALES, 100 = 2 DECIMALES ...			  */
 #define  LONGIUD_MAX_STRING 	20				/*!< Longitud Máxima de palabra para grabar en archivo SD */
 #define  INTERFAZ_SD 			4				/*!< Interfaz SD modo 1 bit o modo 4 bits	  			  */
+#define  SEPARADOR	 		    ","				/*!< Caracter separador de datos en escritura de archivo  */
+
 
 /**
 ************************************************************************************
@@ -112,7 +114,7 @@ void 		Crea_Carpeta 	 (const TCHAR* nombre_carpeta_crear);									//OK
 void 		Borra_Carpeta	 (const TCHAR* nombre_carpeta_borrar);									//OK
 void 		Crea_Archivo 	 (const TCHAR* nombre_archivo_crear);									//OK
 void 		Borra_Archivo	 (const TCHAR* nombre_archivo_borrar);									//OK
-uint8_t 	Datos_String 	 (void *datos, tTipoDatos Tipo_Dato);									//OK (TDD PENDIENTE)
 void		Escribe_Archivo  (const TCHAR* nombre_archivo, void *Datos, tTipoDatos Tipo_Dato);		//OK (TDD PENDIENTE)
+uint8_t 	Datos_String 	 (void *datos, tTipoDatos Tipo_Dato);									//OK (TDD PENDIENTE)
 
 #endif /* INC_INIT_MICROSD_H_ */

@@ -87,7 +87,7 @@ uint8_t Datos_String 	 (void *datos, tTipoDatos Tipo_Dato)
 		case Entero:
 			MicroSD.CS.Dato_Entero = *(int *) datos;															/*!< Se pasa el numero recibido a decimal      				    */
 			sprintf (MicroSD.Datos_String, "%d", MicroSD.CS.Dato_Entero);										/*!< Genera un string con la parte entera			 			*/
-			strcat  (MicroSD.Datos_String, ";");
+			strcat  (MicroSD.Datos_String, SEPARADOR);
 			MicroSD.CS.estado = 1;
 			break;
 
@@ -104,13 +104,13 @@ uint8_t Datos_String 	 (void *datos, tTipoDatos Tipo_Dato)
 			MicroSD.CS.Parte_Decimal 		 = (MicroSD.CS.Parte_Decimal*MAX_DECIMALES);						/*!< Tres decimales de precisión ajustar con DEFINE  			 */
 			MicroSD.CS.Parte_Decimal_Entera  = MicroSD.CS.Parte_Decimal;										/*!< Pasa a entera la parte decimal  							 */
 			sprintf (MicroSD.Datos_String, "%d.%d", MicroSD.CS.Parte_Entera, MicroSD.CS.Parte_Decimal_Entera);	/*!< Genera un string con la parte entera y decimal 			 */
-			strcat  (MicroSD.Datos_String, ";");
+			strcat  (MicroSD.Datos_String,	SEPARADOR);
 			MicroSD.CS.estado = 1;
 			break;
 
 		case Cadena_Caracteres:
 			strcpy	(MicroSD.Datos_String, datos);
-			strcat  (MicroSD.Datos_String, ";");
+			strcat  (MicroSD.Datos_String, SEPARADOR);
 			MicroSD.CS.estado = 1;
 			break;
 
@@ -119,15 +119,15 @@ uint8_t Datos_String 	 (void *datos, tTipoDatos Tipo_Dato)
 			break;
 		}
 
-	if(MicroSD.CS.estado == 1)
+	if(MicroSD.CS.estado == 1)																					/*!< Cuenta numero de bytes escritos para evitar espacios en la escritura  */
 	{
 		for(x=0; x<=sizeof(MicroSD.Datos_String); x++)
 		{
-			if(MicroSD.Datos_String[x] != ';')
+			if(MicroSD.Datos_String[x] != SEPARADOR[0])
 			{
 				MicroSD.CS.n++;
 			}else{
-				MicroSD.CS.n_bytes = MicroSD.CS.n;
+				MicroSD.CS.n_bytes = MicroSD.CS.n+1;
 			}
 		}
 	}
